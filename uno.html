@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNO 遊戲 - 增強版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .game-container {
+            width: 90%;
+            max-width: 1000px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(to right, #ff8c00, #ff0000, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* 狀態顯示區 */
+        .game-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status-panel {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            display: inline-block;
+        }
+        
+        .info-text {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            color: #ffd700;
+            font-size: 1.3rem;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .opponent-area {
+            display: flex;
+            justify-content: center;
+            min-height: 100px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+        }
+        
+        .opponent-cards {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+        
+        .card-back {
+            width: 60px;
+            height: 90px;
+            background: linear-gradient(135deg, #2c3e50, #1a2a6c);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-back::before {
+            content: "UNO";
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffd700;
+            transform: rotate(-30deg);
+        }
+        
+        .discard-pile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            min-height: 130px;
+            position: relative;
+        }
+
+        .deck-pile {
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #333, #111);
+            border-radius: 10px;
+            border: 2px solid #555;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            color: #aaa;
+            font-weight: bold;
+        }
+        
+        .current-card {
+            width: 100px;
+            height: 150px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+            position: relative;
+            transition: transform 0.3s ease;
+            z-index: 2;
+        }
+        
+        .player-hand {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px;
+            min-height: 160px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            align-content: flex-start;
+        }
+        
+        .card {
+            width: 70px;
+            height: 105px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+            position: relative;
+            user-select: none;
+            border: 2px solid transparent;
+        }
+
+        /* 卡片被選中的狀態 */
+        .card.selected {
+            transform: translateY(-20px);
+            border-color: #ffd700;
+            box-shadow: 0 0 15px #ffd700;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card.red { background: linear-gradient(135deg, #ff416c, #ff4b2b); color: white; text-shadow: 1px 1px 2px black; }
+        .card.blue { background: linear-gradient(135deg, #2193b0, #6dd5ed); color: white; text-shadow: 1px 1px 2px black; }
+        .card.green { background: linear-gradient(135deg, #11998e, #38ef7d); color: white; text-shadow: 1px 1px 2px black; }
+        .card.yellow { background: linear-gradient(135deg, #f7971e, #ffd200); color: black; text-shadow: 1px 1px 2px rgba(255,255,255,0.5); }
+        .card.wild { 
+            background: linear-gradient(135deg, #ff0000, #ffff00, #00ff00, #0000ff); 
+            color: white;
+            text-shadow: 1px 1px 3px black;
+        }
+        
+        .card.wild::before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 2px solid rgba(255,255,255,0.5);
+            border-radius: 6px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: linear-gradient(to right, #ff8c00, #ff0000);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #play-cards-btn {
+            display: none; /* 預設隱藏，選擇牌後顯示 */
+            background: linear-gradient(to right, #00b09b, #96c93d);
+        }
+        
+        .color-selector {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(30, 30, 30, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .color-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+        
+        .color-option:hover {
+            transform: scale(1.2);
+        }
+        
+        .color-option.red { background: #ff416c; }
+        .color-option.blue { background: #2193b0; }
+        .color-option.green { background: #11998e; }
+        .color-option.yellow { background: #ffd200; }
+        
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px 25px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #ffd700;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .message.show {
+            opacity: 1;
+        }
+        
+        .win-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 200;
+            display: none;
+        }
+        
+        .win-message h2 {
+            font-size: 4rem;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #ff8c00, #ff0000, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 適應小螢幕 */
+        @media (max-width: 600px) {
+            .card { width: 50px; height: 75px; font-size: 1.1rem; }
+            .current-card { width: 70px; height: 105px; font-size: 1.5rem; }
+            .card-back { width: 50px; height: 75px; }
+            .deck-pile { width: 70px; height: 105px; }
+            h1 { font-size: 2rem; }
+            .info-text { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>UNO 遊戲</h1>
+        </header>
+        
+        <!-- 遊戲資訊區 -->
+        <div class="game-info">
+            <div class="status-panel">
+                <span class="info-text">電腦手牌:</span>
+                <span id="computer-count" class="highlight">7</span>
+            </div>
+            
+            <!-- 新增：顯示當前需要的顏色和數字 -->
+            <div class="status-panel" style="flex-grow: 1; justify-content: center;">
+                <span class="info-text">目前出牌: </span>
+                <div id="status-color-indicator" class="color-indicator" style="background: #ccc;"></div>
+                <span id="status-value" class="highlight">?</span>
+            </div>
+
+            <div class="status-panel">
+                <span class="info-text">玩家手牌:</span>
+                <span id="player-count" class="highlight">7</span>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <!-- 電腦手牌 -->
+            <div class="opponent-area">
+                <div class="opponent-cards" id="computer-cards"></div>
+            </div>
+            
+            <!-- 棄牌堆與抽牌堆 -->
+            <div class="discard-pile">
+                <!-- 抽牌堆 -->
+                <div class="deck-pile" id="draw-pile" title="點擊抽牌">
+                    抽牌
+                </div>
+                <!-- 棄牌堆頂 -->
+                <div class="current-card" id="discard-pile"></div>
+            </div>
+            
+            <!-- 玩家手牌 -->
+            <div class="player-hand" id="player-hand"></div>
+        </div>
+        
+        <!-- 控制區 -->
+        <div class="controls">
+            <button id="pass-turn" style="display: none;">跳過回合</button>
+            <button id="play-cards-btn">出牌</button>
+            <button id="uno-button">喊 UNO!</button>
+            <button id="new-game">新遊戲</button>
+        </div>
+    </div>
+    
+    <!-- 顏色選擇器 -->
+    <div class="color-selector" id="color-selector">
+        <div class="color-options">
+            <div class="color-option red" data-color="red"></div>
+            <div class="color-option blue" data-color="blue"></div>
+            <div class="color-option green" data-color="green"></div>
+            <div class="color-option yellow" data-color="yellow"></div>
+        </div>
+    </div>
+    
+    <!-- 訊息提示 -->
+    <div class="message" id="game-message">訊息</div>
+    
+    <!-- 勝利訊息 -->
+    <div class="win-message" id="win-message">
+        <h2 id="winner-text">勝利者</h2>
+        <button id="play-again">再玩一次</button>
+    </div>
+
+    <script>
+        // 遊戲狀態
+        const gameState = {
+            deck: [],
+            playerHand: [],
+            computerHand: [],
+            discardPile: [],
+            currentPlayer: 'player',
+            selectedColor: null, // 這裡儲存萬能卡選擇的顏色，或是當前必須跟隨的顏色
+            currentColor: null,   // 當前棄牌堆實際顯示的顏色
+            unoCalled: false,
+            gameActive: true,
+            selectedCardIndices: new Set(), // 用於存儲多選的索引
+            hasDrawnThisTurn: false // 本回合是否已抽牌
+        };
+
+        const colors = ['red', 'blue', 'green', 'yellow'];
+        const values = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'skip', 'reverse', 'draw2'];
+        const wildCards = ['wild', 'wild4'];
+
+        // DOM 元素
+        const playerHandEl = document.getElementById('player-hand');
+        const discardPileEl = document.getElementById('discard-pile');
+        const statusColorInd = document.getElementById('status-color-indicator');
+        const statusValueEl = document.getElementById('status-value');
+        const playCardsBtn = document.getElementById('play-cards-btn');
+        const passTurnBtn = document.getElementById('pass-turn');
+
+        // 初始化遊戲
+        function initGame() {
+            gameState.deck = [];
+            gameState.playerHand = [];
+            gameState.computerHand = [];
+            gameState.discardPile = [];
+            gameState.currentPlayer = 'player';
+            gameState.selectedColor = null;
+            gameState.currentColor = null;
+            gameState.unoCalled = false;
+            gameState.gameActive = true;
+            gameState.selectedCardIndices.clear();
+            gameState.hasDrawnThisTurn = false;
+            
+            document.getElementById('win-message').style.display = 'none';
+            playCardsBtn.style.display = 'none';
+            passTurnBtn.style.display = 'none';
+            
+            createDeck();
+            shuffleDeck();
+            dealCards();
+            placeFirstCard();
+            updateDisplay();
+            showMessage('遊戲開始！點擊手牌選擇，或點擊「出牌」');
+        }
+
+        // 創建牌組
+        function createDeck() {
+            for (const color of colors) {
+                for (const value of values) {
+                    gameState.deck.push({ color, value });
+                    if (value !== '0') gameState.deck.push({ color, value });
+                }
+            }
+            for (let i = 0; i < 4; i++) {
+                gameState.deck.push({ color: 'wild', value: 'wild' });
+                gameState.deck.push({ color: 'wild', value: 'wild4' });
+            }
+        }
+
+        // 洗牌
+        function shuffleDeck() {
+            for (let i = gameState.deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [gameState.deck[i], gameState.deck[j]] = [gameState.deck[j], gameState.deck[i]];
+            }
+        }
+
+        // 發牌
+        function dealCards() {
+            for (let i = 0; i < 7; i++) {
+                gameState.playerHand.push(gameState.deck.pop());
+                gameState.computerHand.push(gameState.deck.pop());
+            }
+        }
+
+        // 放置第一張棄牌
+        function placeFirstCard() {
+            let firstCard;
+            do {
+                firstCard = gameState.deck.pop();
+            } while (firstCard.color === 'wild');
+            
+            gameState.discardPile.push(firstCard);
+            gameState.currentColor = firstCard.color; // 初始化當前顏色
+        }
+
+        // 更新顯示
+        function updateDisplay() {
+            // 玩家手牌
+            playerHandEl.innerHTML = '';
+            gameState.playerHand.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${card.color}`;
+                if (gameState.selectedCardIndices.has(index)) {
+                    cardEl.classList.add('selected');
+                }
+                
+                let displayText = card.value;
+                if (card.value === 'wild') displayText = 'W';
+                else if (card.value === 'wild4') displayText = '+4';
+                else if (card.value === 'skip') displayText = '⊘';
+                else if (card.value === 'reverse') displayText = '⇄';
+                else if (card.value === 'draw2') displayText = '+2';
+                
+                cardEl.textContent = displayText;
+                cardEl.dataset.index = index;
+                
+                // 點擊事件：選擇/取消選擇
+                cardEl.addEventListener('click', (e) => {
+                    e.stopPropagation(); // 防止點擊背景取消選擇
+                    toggleCardSelection(index);
+                });
+                
+                playerHandEl.appendChild(cardEl);
+            });
+
+            // 電腦手牌 (背面)
+            const computerCardsEl = document.getElementById('computer-cards');
+            computerCardsEl.innerHTML = '';
+            for (let i = 0; i < gameState.computerHand.length; i++) {
+                const cardEl = document.createElement('div');
+                cardEl.className = 'card-back';
+                computerCardsEl.appendChild(cardEl);
+            }
+
+            // 棄牌堆頂
+            const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+            discardPileEl.className = `current-card ${topCard.color}`;
+            
+            let topText = topCard.value;
+            if (topCard.value === 'wild') topText = 'W';
+            else if (topCard.value === 'wild4') topText = '+4';
+            else if (topCard.value === 'skip') topText = '⊘';
+            else if (topCard.value === 'reverse') topText = '⇄';
+            else if (topCard.value === 'draw2') topText = '+2';
+            
+            discardPileEl.textContent = topText;
+            document.getElementById('player-count').textContent = gameState.playerHand.length;
+            document.getElementById('computer-count').textContent = gameState.computerHand.length;
+
+            // 更新狀態顯示 (顏色與數字)
+            // 如果是萬能卡，顯示選定的顏色；否則顯示卡片本身的顏色
+            const displayColor = (topCard.color === 'wild') ? (gameState.selectedColor || 'gray') : topCard.color;
+            statusColorInd.style.background = getColorCode(displayColor);
+            
+            // 顯示需要匹配的值
+            statusValueEl.textContent = topCard.value.toUpperCase();
+
+            // 按鈕狀態控制
+            if (gameState.selectedCardIndices.size > 0 && gameState.currentPlayer === 'player') {
+                playCardsBtn.style.display = 'block';
+            } else {
+                playCardsBtn.style.display = 'none';
+            }
+
+            if (gameState.hasDrawnThisTurn && gameState.currentPlayer === 'player') {
+                passTurnBtn.style.display = 'block';
+            } else {
+                passTurnBtn.style.display = 'none';
+            }
+        }
+
+        // 獲取顏色代碼
+        function getColorCode(colorName) {
+            switch(colorName) {
+                case 'red': return '#ff416c';
+                case 'blue': return '#2193b0';
+                case 'green': return '#11998e';
+                case 'yellow': return '#ffd200';
+                default: return '#ccc';
+            }
+        }
+
+        // 切換卡片選擇狀態
+        function toggleCardSelection(index) {
+            if (gameState.currentPlayer !== 'player' || !gameState.gameActive) return;
+
+            if (gameState.selectedCardIndices.has(index)) {
+                gameState.selectedCardIndices.delete(index);
+            } else {
+                // 如果選了一張牌，再選另一張，必須檢查是否符合「同數字不同顏色」規則
+                if (gameState.selectedCardIndices.size > 0) {
+                    const firstIndex = gameState.selectedCardIndices.values().next().value;
+                    const firstCard = gameState.playerHand[firstIndex];
+                    const currentCard = gameState.playerHand[index];
+                    
+                    // 規則：必須數字相同，且顏色不同
+                    // 注意：萬能卡一般不允許跟數字牌一起出，除非特殊規則，這裡簡化為不允許
+                    if (currentCard.color === 'wild' || firstCard.color === 'wild') {
+                        showMessage('萬能牌不能搭配其他牌');
+                        return;
+                    }
+                    if (currentCard.value !== firstCard.value) {
+                        showMessage('只能選擇數字相同的牌！');
+                        return;
+                    }
+                    if (currentCard.color === firstCard.color) {
+                        showMessage('這張牌已經選過了 (同色同數)');
+                        return;
+                    }
+                }
+                gameState.selectedCardIndices.add(index);
+            }
+            updateDisplay();
+        }
+
+        // 檢查單張牌是否可出
+        function canPlayCard(card) {
+            const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+            
+            // 萬能牌總是可出
+            if (card.color === 'wild') return true;
+            
+            // 顏色匹配 (使用 gameState.currentColor 因為萬能牌後會改變它)
+            if (card.color === gameState.currentColor) return true;
+            
+            // 數字/功能匹配
+            if (card.value === topCard.value) return true;
+            
+            return false;
+        }
+
+        // 執行出牌 (處理多張)
+        playCardsBtn.addEventListener('click', () => {
+            if (gameState.selectedCardIndices.size === 0) return;
+
+            // 將 Set 轉為 Array 並排序 (從大到小刪除，避免索引錯亂)
+            const indices = Array.from(gameState.selectedCardIndices).sort((a, b) => b - a);
+            
+            // 檢查第一張牌是否符合規則 (其實多張的話只需檢查是否匹配場上)
+            const firstIndex = indices[indices.length - 1];
+            const firstCard = gameState.playerHand[firstIndex];
+
+            if (!canPlayCard(firstCard)) {
+                showMessage('選擇的牌不符合規則！');
+                gameState.selectedCardIndices.clear();
+                updateDisplay();
+                return;
+            }
+
+            // 特殊情況：如果是多張功能牌 (Skip, Draw2, Reverse)，通常只能出一張
+            // 數字牌 0-9 可以多張，這裡做簡單限制
+            const isNumber = !isNaN(parseInt(firstCard.value));
+            
+            if (indices.length > 1 && !isNumber) {
+                showMessage('功能牌只能出一張！');
+                gameState.selectedCardIndices.clear();
+                updateDisplay();
+                return;
+            }
+
+            // 執行出牌動作
+            // 注意：多張同數字出牌時，通常是快速連續出牌。
+            // 但為了簡化邏輯，這裡如果是多張，我們只對第一張處理特殊效果，
+            // 其他同數字牌直接丟入棄牌堆，不疊加效果 (例如：+2 +2 +2 真的會抽6張嗎？通常規則是允許的)
+            
+            // 這裡採用：如果是多張同數字牌，效果疊加 (簡化處理：讓對方對應次數)
+            // 例如：出兩張 +2，對方抽 4 張。
+            
+            let skipTurns = 0;
+            let drawCount = 0;
+            let isWild = false;
+            let wildIndex = -1;
+
+            // 暫存移除的牌
+            let cardsToPlay = [];
+
+            indices.forEach(index => {
+                const card = gameState.playerHand.splice(index, 1)[0];
+                cardsToPlay.push(card);
+                
+                if (card.color === 'wild') {
+                    isWild = true;
+                    wildIndex = cardsToPlay.length - 1; // 記錄是第幾張 (如果是多張，通常是第一張決定顏色)
+                } else {
+                    // 更新當前顏色
+                    gameState.currentColor = card.color;
+                }
+
+                if (card.value === 'skip' || card.value === 'reverse') skipTurns++;
+                if (card.value === 'draw2') drawCount += 2;
+                if (card.value === 'wild4') drawCount += 4;
+            });
+
+            // 將牌加入棄牌堆 (按順序)
+            gameState.discardPile.push(...cardsToPlay);
+            
+            gameState.selectedCardIndices.clear();
+            gameState.hasDrawnThisTurn = false;
+
+            // 處理 UNO
+            if (gameState.playerHand.length === 1 && !gameState.unoCalled) {
+                showMessage('別忘了喊 UNO!');
+            } else if (gameState.playerHand.length === 0) {
+                endGame('player');
+                return;
+            }
+
+            // 處理效果
+            if (isWild) {
+                // 需要選擇顏色
+                // 暫存效果參數，等選完顏色再執行
+                gameState.pendingWildAction = { skipTurns, drawCount };
+                document.getElementById('color-selector').style.display = 'flex';
+            } else {
+                applyCardEffect(skipTurns, drawCount);
+            }
+        });
+
+        // 應用卡片效果
+        function applyCardEffect(skipTurns, drawCount) {
+            let message = '';
+            
+            if (drawCount > 0) {
+                for (let i = 0; i < drawCount; i++) {
+                    gameState.computerHand.push(drawCard());
+                }
+                message = `電腦被罰抽 ${drawCount} 張牌！`;
+            }
+            
+            if (skipTurns > 0) {
+                // 在兩人遊戲中，Skip/Reverse = 再玩一次
+                message = message ? message + ' 並跳過回合！' : '電腦回合被跳過！';
+                showMessage(message);
+                // 玩家繼續回合
+                gameState.currentPlayer = 'player';
+                updateDisplay();
+                // 重置回合標記
+                gameState.hasDrawnThisTurn = false;
+            } else {
+                if (message) showMessage(message);
+                // 切換到電腦
+                gameState.currentPlayer = 'computer';
+                updateDisplay();
+                setTimeout(computerTurn, 1500);
+            }
+        }
+
+        // 選擇顏色回調
+        function selectColor(color) {
+            gameState.selectedColor = color;
+            gameState.currentColor = color; // 更新當前遊戲顏色
+            document.getElementById('color-selector').style.display = 'none';
+            
+            const action = gameState.pendingWildAction;
+            
+            showMessage(`你選擇了 ${color} 色`);
+            
+            // 處理積壓的效果
+            if (action) {
+                gameState.pendingWildAction = null;
+                applyCardEffect(action.skipTurns, action.drawCount);
+            } else {
+                // 普通出牌邏輯 (單張 Wild)
+                if (gameState.playerHand.length === 0) {
+                    endGame('player');
+                    return;
+                }
+                gameState.currentPlayer = 'computer';
+                updateDisplay();
+                setTimeout(computerTurn, 1500);
+            }
+        }
+
+        // 抽牌功能
+        document.getElementById('draw-pile').addEventListener('click', () => {
+            if (gameState.currentPlayer !== 'player' || !gameState.gameActive || gameState.hasDrawnThisTurn) return;
+            
+            const card = drawCard();
+            gameState.playerHand.push(card);
+            gameState.hasDrawnThisTurn = true;
+            
+            showMessage('你抽了一張牌');
+            
+            // 清除選擇
+            gameState.selectedCardIndices.clear();
+            updateDisplay();
+            
+            // 檢查剛抽的牌是否可出 (可選邏輯：這裡不強制，玩家可以選擇 Pass)
+        });
+
+        // 跳過回合
+        passTurnBtn.addEventListener('click', () => {
+            if (!gameState.hasDrawnThisTurn) return;
+            gameState.currentPlayer = 'computer';
+            gameState.hasDrawnThisTurn = false;
+            gameState.selectedCardIndices.clear();
+            updateDisplay();
+            setTimeout(computerTurn, 1000);
+        });
+
+        // 電腦回合
+        function computerTurn() {
+            if (!gameState.gameActive || gameState.currentPlayer !== 'computer') return;
+            
+            // 簡單 AI：找能出的牌
+            let playableCardIndex = -1;
+            
+            // 優先出功能牌或數字牌，保留 Wild
+            for (let i = 0; i < gameState.computerHand.length; i++) {
+                const card = gameState.computerHand[i];
+                if (card.color !== 'wild' && (card.color === gameState.currentColor || card.value === gameState.discardPile[gameState.discardPile.length-1].value)) {
+                    playableCardIndex = i;
+                    break;
+                }
+            }
+            
+            // 沒牌出就抽
+            if (playableCardIndex === -1) {
+                // 檢查是否有 Wild
+                const wildIndex = gameState.computerHand.findIndex(c => c.color === 'wild');
+                if (wildIndex !== -1) {
+                    playableCardIndex = wildIndex;
+                } else {
+                    const drawnCard = drawCard();
+                    gameState.computerHand.push(drawnCard);
+                    showMessage('電腦抽了一張牌');
+                    gameState.currentPlayer = 'player';
+                    gameState.hasDrawnThisTurn = false;
+                    updateDisplay();
+                    return;
+                }
+            }
+            
+            // 出牌
+            const playedCard = gameState.computerHand.splice(playableCardIndex, 1)[0];
+            gameState.discardPile.push(playedCard);
+            
+            // 處理顏色
+            if (playedCard.color === 'wild') {
+                // 電腦選顏色 (隨機或選手牌最多的顏色)
+                const colorCounts = { red:0, blue:0, green:0, yellow:0 };
+                gameState.computerHand.forEach(c => { if(c.color !== 'wild') colorCounts[c.color]++; });
+                const bestColor = Object.keys(colorCounts).reduce((a, b) => colorCounts[a] > colorCounts[b] ? a : b);
+                
+                gameState.selectedColor = bestColor;
+                gameState.currentColor = bestColor;
+                showMessage(`電腦出了 Wild，選擇了 ${bestColor}`);
+            } else {
+                gameState.currentColor = playedCard.color;
+                showMessage(`電腦出了 ${playedCard.color} ${playedCard.value}`);
+            }
+            
+            // 檢查勝利
+            if (gameState.computerHand.length === 0) {
+                endGame('computer');
+                return;
+            }
+            
+            // 檢查 UNO
+            if (gameState.computerHand.length === 1) {
+                showMessage('電腦喊了 UNO!');
+            }
+
+            // 處理效果
+            let drawCount = 0;
+            let skip = false;
+            if (playedCard.value === 'draw2') drawCount = 2;
+            if (playedCard.value === 'wild4') drawCount = 4;
+            if (playedCard.value === 'skip' || playedCard.value === 'reverse') skip = true;
+
+            if (drawCount > 0) {
+                for (let i = 0; i < drawCount; i++) {
+                    gameState.playerHand.push(drawCard());
+                }
+                showMessage(`你被罰抽 ${drawCount} 張牌！`);
+            }
+
+            if (skip) {
+                showMessage('你的回合被跳過！');
+                gameState.currentPlayer = 'computer';
+                setTimeout(computerTurn, 1500);
+            } else {
+                gameState.currentPlayer = 'player';
+                gameState.hasDrawnThisTurn = false;
+                updateDisplay();
+                showMessage('你的回合');
+            }
+        }
+
+        function drawCard() {
+            if (gameState.deck.length === 0) {
+                const topCard = gameState.discardPile.pop();
+                gameState.deck = [...gameState.discardPile];
+                gameState.discardPile = [topCard];
+                shuffleDeck();
+            }
+            return gameState.deck.pop();
+        }
+
+        function endGame(winner) {
+            gameState.gameActive = false;
+            const winMessage = document.getElementById('win-message');
+            const winnerText = document.getElementById('winner-text');
+            winnerText.textContent = winner === 'player' ? '你贏了！' : '電腦贏了！';
+            winMessage.style.display = 'flex';
+        }
+
+        function showMessage(text) {
+            const messageEl = document.getElementById('game-message');
+            messageEl.textContent = text;
+            messageEl.classList.add('show');
+            setTimeout(() => messageEl.classList.remove('show'), 2000);
+        }
+
+        // 按鈕監聽
+        document.getElementById('new-game').addEventListener('click', initGame);
+        document.getElementById('play-again').addEventListener('click', initGame);
+        
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', () => selectColor(option.dataset.color));
+        });
+
+        document.getElementById('uno-button').addEventListener('click', () => {
+            if (gameState.playerHand.length <= 2 && gameState.currentPlayer === 'player') {
+                gameState.unoCalled = true;
+                showMessage('UNO!');
+            } else {
+                showMessage('現在還不能喊 UNO');
+            }
+        });
+
+        // 開始遊戲
+        window.onload = initGame;
+    </script>
+</body>
+</html>
