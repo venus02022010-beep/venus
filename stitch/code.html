@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Venus Game Center Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#e071a1",
+                        "accent-blue": "#bbf5ec",
+                        "background-light": "#f8f6f7",
+                        "background-dark": "#201218",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .cute-gradient {
+            background: linear-gradient(135deg, #f8f6f7 0%, #fdf2f7 50%, #eefdfb 100%);
+        }
+        .dark .cute-gradient {
+            background: linear-gradient(135deg, #201218 0%, #2d1a22 100%);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex min-h-screen w-full flex-col cute-gradient overflow-x-hidden pb-10">
+<!-- Header -->
+<div class="flex items-center p-6 pb-2 justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded-full text-primary flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-size: 28px;">auto_awesome</span>
+</div>
+<h2 class="text-[#1a0f14] dark:text-white text-3xl font-extrabold leading-tight tracking-tight">Great!</h2>
+</div>
+<button class="bg-white/80 dark:bg-white/10 backdrop-blur-md p-2 rounded-full shadow-sm text-[#1a0f14] dark:text-white">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+<!-- Featured Section -->
+<div class="p-6 @container">
+<div class="flex flex-col items-stretch justify-start rounded-xl @xl:flex-row @xl:items-start shadow-xl shadow-primary/5 bg-white dark:bg-white/5 border border-white/50 dark:border-white/10 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-[4/3] bg-cover" data-alt="Illustration of colorful UNO cards flying in the air" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuArGq9OZTZFMd0bPIto_6VbqMFWZG13bfga3-1DYQSs2AmaoR4fJk9_80NLoISRwJWjTI116vVBcUmEDsj-Kku8CsIeRZhaXMszy2kJ02VCMo0sdX9JGExCl4Xt0Vci0I3EfMoIf_171Ilugxdovn8yhIZv1IFPBMbXmXOXCpF91qB-p9OJjUuvvUTsrvvBBYgLu5EH4PsW7uP5EMw_d75h7QdBJZagAl0FEx8PBlsY4zbBn2Cyg6ntLqkK6QgPuJ-Dsa4ThgKOaw");'>
+</div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-2 p-6">
+<div class="flex items-center gap-2">
+<span class="bg-accent-blue text-[#1a0f14] text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Featured</span>
+<div class="flex gap-0.5">
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+<span class="material-symbols-outlined text-yellow-400 text-sm" style="font-variation-settings: 'FILL' 1">star</span>
+</div>
+</div>
+<p class="text-[#1a0f14] dark:text-white text-2xl font-black leading-tight tracking-tight">UNO</p>
+<div class="flex flex-col gap-4">
+<div class="flex flex-col gap-1">
+<p class="text-gray-600 dark:text-gray-300 text-base font-medium leading-relaxed">Welcome to the world’s most loved card game. Ready to play?</p>
+<p class="text-primary text-sm font-semibold">Play the classic card game with friends!</p>
+</div>
+<button class="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-primary text-white text-lg font-bold leading-normal shadow-lg shadow-primary/30 transition-transform active:scale-95">
+<span class="truncate">Start</span>
+<span class="material-symbols-outlined ml-2">play_arrow</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Section Title -->
+<div class="flex items-center justify-between px-6 pb-2 pt-4">
+<h3 class="text-[#1a0f14] dark:text-white text-xl font-bold leading-tight tracking-tight">More Games</h3>
+<span class="text-primary text-sm font-bold">View all</span>
+</div>
+<!-- Games Grid -->
+<div class="grid grid-cols-2 gap-4 px-6 pb-8">
+<div class="group relative bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-4 aspect-square shadow-lg overflow-hidden transition-transform active:scale-95" data-alt="A deck of cards arranged for solitaire game" style='background-image: linear-gradient(0deg, rgba(224, 113, 161, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDF6g39gfsFMlexGgUnKwi3jMj87G5thCTA3EB4mDzSR5CDMB2IIGCEEelAymt74sUIL6Kpo5FIpbC2UL5WNBuVMKb0sFLSmflCA-kFFCkx_IiGbz-XePMX7sptpi0brSOWKl7xCsLWmj5jj6drI-kGkCvWdboRd76Kf1ZRpLUuMljvRL-eOMPcJQamuHfTm6w5hQgUwej0NvrZAsBNffM_vv619Dd3LOuGqFFRIrim0S289-B_TOwvk-B_Qq_7gXsYGeCR9J5eTQ");'>
+<div class="absolute top-2 right-2 bg-white/20 backdrop-blur-md p-1.5 rounded-full">
+<span class="material-symbols-outlined text-white text-sm">favorite</span>
+</div>
+<p class="text-white text-lg font-extrabold leading-tight w-full drop-shadow-md">Solitaire</p>
+</div>
+<div class="group relative bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-4 aspect-square shadow-lg overflow-hidden transition-transform active:scale-95" data-alt="Colorful candies for a match three game" style='background-image: linear-gradient(0deg, rgba(187, 245, 236, 0.7) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAIZCZYI95YJt0qmchqSY4FTJZOHMSX0M0NZ6PPBtVa3zcNHwv2mgi0t9aA2uRj5tD3L26cjJ1x-ukXYb6ROONodO1VusEETKpApUrIgjBuH4OuEb93RARB3DXkAuJ2fY684lXJ-JSXVWkm39sT_T67dyiFCSV7RgdE8F4VuahONixKYv--Bg8pad5tIi1SBelHcvHU09jvH0pXNwc74XQGuT9IxUg9KEzAfz9lEQUVeknC7Wkeb1C8u_5oz4n4Lc_Cy7hAEAVwaQ");'>
+<div class="absolute top-2 right-2 bg-white/20 backdrop-blur-md p-1.5 rounded-full">
+<span class="material-symbols-outlined text-white text-sm">favorite</span>
+</div>
+<p class="text-[#1a0f14] text-lg font-extrabold leading-tight w-full drop-shadow-md">Candy Match</p>
+</div>
+<div class="group relative bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-4 aspect-square shadow-lg overflow-hidden transition-transform active:scale-95" data-alt="A playful chess board with cute characters" style='background-image: linear-gradient(0deg, rgba(224, 113, 161, 0.6) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCuIscqoUjlQ9B0Iyl4Z9BR7X6BImsY6LNGFstNYhbKO7LUmll76wLUfy1j073edYC-Zw3dM4Hdmsopf-GOxEccNUgH7z1GWDn3dlJxACg2NxFpO5JLEvryYDj5B8r9uF0GgBDj1PnFjBPvUS5VoffvErxNybuO1ACxpWq4Ah0-hXrANGqFffZaVuXr4aMwfr-upJWZgoprRZoXBEJpDLFyUwuIesspCOWpFeGJ_i8jDcm0mapjLt5X6-6K_dIUwzau1DNsxykKNw");'>
+<p class="text-white text-lg font-extrabold leading-tight w-full drop-shadow-md">Pawn Stars</p>
+</div>
+<div class="group relative bg-cover bg-center flex flex-col gap-3 rounded-xl justify-end p-4 aspect-square shadow-lg overflow-hidden transition-transform active:scale-95" data-alt="Cute space themed puzzle game" style='background-image: linear-gradient(0deg, rgba(187, 245, 236, 0.7) 0%, rgba(0, 0, 0, 0) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCfEl8n6uam9My1ZiGPXrHExBmW21pkPLk6bj4P_5iIERo2xXCSBQbu5eO4oAQHkvai7fJo-ZrWa7eSqCDDjV6_RLK8V9K44T1eq4yJdopKVLTHI4OwPi8ZTZsUklFqPERJqN_7JNNMxRTnS543dc-NwzLzl3HUMFYMU1A-Fl23MXhKb11B9CDhrvkpq_kJdCUx_b9LWJ9PpwkT5EqcT_T9Ij_516W611P23ugAy1T3JoqkVaZaCJ6nSCXRQxck0_Kkn98T5-BhXQ");'>
+<p class="text-[#1a0f14] text-lg font-extrabold leading-tight w-full drop-shadow-md">Star Blast</p>
+</div>
+</div>
+<!-- Footer -->
+<div class="mt-auto py-8 flex flex-col items-center gap-2">
+<div class="flex gap-6 mb-4">
+<span class="material-symbols-outlined text-gray-400">home</span>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1">grid_view</span>
+<span class="material-symbols-outlined text-gray-400">search</span>
+<span class="material-symbols-outlined text-gray-400">settings</span>
+</div>
+<p class="text-primary text-xl font-black tracking-[0.2em] opacity-40">venus</p>
+</div>
+</div>
+</body></html>

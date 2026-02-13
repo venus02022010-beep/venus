@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遊戲中心 - 我的遊戲專案</title>
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #00d2ff;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --text-secondary: #b0b0b0;
+            --success-color: #00ff88;
+            --danger-color: #ff0055;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, #1a1a2e 100%);
+            color: var(--text-color);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 頁首樣式 */
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ff8c00, #ff0000, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 140, 0, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 遊戲卡片樣式 */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-header {
+            padding: 25px;
+            text-align: center;
+            background: linear-gradient(90deg, rgba(106, 17, 203, 0.2), rgba(37, 117, 252, 0.2));
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .game-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .snake-title {
+            color: var(--success-color);
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        .uno-title {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .game-description {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+
+        .game-preview {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .snake-preview {
+            background: linear-gradient(135deg, #121212, #1a1a2e);
+            position: relative;
+        }
+
+        .snake-preview::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--success-color) 0%, transparent 70%);
+            opacity: 0.2;
+            border-radius: 50%;
+        }
+
+        .uno-preview {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f);
+            position: relative;
+        }
+
+        .uno-preview::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #ffd700 0%, transparent 70%);
+            opacity: 0.2;
+            border-radius: 50%;
+        }
+
+        .game-features {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .features-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .features-list {
+            list-style-type: none;
+        }
+
+        .features-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: var(--success-color);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .game-actions {
+            padding: 25px;
+            text-align: center;
+        }
+
+        .play-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .snake-btn {
+            background: linear-gradient(90deg, var(--success-color), #00cc77);
+            color: #000;
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .snake-btn:hover {
+            background: linear-gradient(90deg, #00cc77, var(--success-color));
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.5);
+            transform: scale(1.05);
+        }
+
+        .uno-btn {
+            background: linear-gradient(90deg, #ff8c00, #ff0000);
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+
+        .uno-btn:hover {
+            background: linear-gradient(90deg, #ff0000, #ff8c00);
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        /* 頁尾樣式 */
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--success-color);
+            text-decoration: underline;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .game-title {
+                font-size: 1.8rem;
+            }
+            
+            .play-btn {
+                padding: 12px 30px;
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 30px 15px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .game-card {
+                border-radius: 15px;
+            }
+        }
+
+        /* 動畫效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .game-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .game-card:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        /* 額外資訊區 */
+        .project-info {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .info-text {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="logo">🎮 遊戲中心</h1>
+            <p class="tagline">歡迎來到我的遊戲專案！這裡有精心製作的網頁遊戲，點擊下方卡片開始遊玩。</p>
+        </header>
+
+        <main>
+            <div class="games-grid">
+                <!-- 貪食蛇遊戲卡片 -->
+                <div class="game-card">
+                    <div class="game-header">
+                        <h2 class="game-title snake-title">霓虹貪食蛇</h2>
+                        <p class="game-description">經典貪食蛇遊戲的現代化版本，具有霓虹風格設計和流暢的遊戲體驗</p>
+                    </div>
+                    <div class="game-preview snake-preview"></div>
+                    <div class="game-features">
+                        <h3 class="features-title">遊戲特色</h3>
+                        <ul class="features-list">
+                            <li>現代化霓虹風格UI設計</li>
+                            <li>響應式設計，支援桌面和移動設備</li>
+                            <li>虛擬控制器（移動設備專用）</li>
+                            <li>音效系統與視覺效果</li>
+                            <li>本地存儲最高分紀錄</li>
+                            <li>遊戲速度隨分數增加而提高</li>
+                        </ul>
+                    </div>
+                    <div class="game-actions">
+                        <a href="snake.html" class="play-btn snake-btn">開始遊戲</a>
+                    </div>
+                </div>
+
+                <!-- UNO遊戲卡片 -->
+                <div class="game-card">
+                    <div class="game-header">
+                        <h2 class="game-title uno-title">UNO 增強版</h2>
+                        <p class="game-description">功能完整的UNO卡牌遊戲，支援多張牌選擇和狀態顯示優化</p>
+                    </div>
+                    <div class="game-preview uno-preview"></div>
+                    <div class="game-features">
+                        <h3 class="features-title">遊戲特色</h3>
+                        <ul class="features-list">
+                            <li>完整的UNO遊戲規則實現</li>
+                            <li>多張牌選擇功能（符合PRD要求）</li>
+                            <li>狀態顯示優化（顏色指示器、數值顯示）</li>
+                            <li>智能電腦AI對手</li>
+                            <li>響應式設計與美觀界面</li>
+                            <li>UNO懲罰與挑戰規則</li>
+                        </ul>
+                    </div>
+                    <div class="game-actions">
+                        <a href="uno.html" class="play-btn uno-btn">開始遊戲</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 專案資訊區 -->
+            <div class="project-info">
+                <h3 class="info-title">關於此專案</h3>
+                <p class="info-text">
+                    這是一個個人遊戲開發專案，包含兩個完整的網頁遊戲。專案展示了現代網頁開發技術的應用，
+                    包括HTML5、CSS3、JavaScript、響應式設計和遊戲開發技巧。所有遊戲都可以直接在瀏覽器中運行，
+                    無需安裝任何額外軟體。
+                </p>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">個完整遊戲</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">響應式設計</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">需安裝插件</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">免費</span>
+                        <span class="stat-label">完全免費遊玩</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2025 遊戲專案 | 由 HTML5、CSS3 和 JavaScript 驅動</p>
+            <div class="footer-links">
+                <a href="plans/game_improvement_plan.md" target="_blank">查看改進計劃</a>
+                <a href="prd.txt" target="_blank">產品需求文檔</a>
+                <a href="README.md" target="_blank">專案說明</a>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #666;">
+                提示：使用方向鍵或WASD控制貪食蛇，空白鍵暫停遊戲。UNO遊戲支援多張牌選擇功能。
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 添加一些互動效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 為遊戲卡片添加點擊效果
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            gameCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // 防止點擊按鈕時觸發卡片點擊
+                    if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                        return;
+                    }
+                    
+                    // 添加點擊效果
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            });
+
+            // 添加滾動動畫
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // 觀察專案資訊區
+            const projectInfo = document.querySelector('.project-info');
+            if (projectInfo) {
+                projectInfo.style.opacity = '0';
+                projectInfo.style.transform = 'translateY(20px)';
+                projectInfo.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(projectInfo);
+            }
+
+            // 更新頁面載入時間
+            const loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
+            console.log(`頁面載入時間: ${loadTime}ms`);
+        });
+    </script>
+</body>
+</html>
